@@ -1,41 +1,27 @@
 class Solution {
 public:
-    int minEatingSpeed(vector<int>& piles, int h) {
-        vector<int> v = piles;
-        sort(v.begin(), v.end());
-        int max_pile = v[v.size()-1];
-        int i = max_pile;
-        long long run_sum = 0;
-        for(int l = 0; l<v.size(); l++){
-            run_sum+=(v[l]+i-1)/i; 
-        }
-        int rate = i;
-        for(int b = max_pile/2; b>=1; b/=2){
-            while(i-b>0 && run_sum<=h){
-                i = i-b;
-                run_sum = 0;
-                for(int idx = 0; idx<v.size(); idx++){
-                    run_sum+=(v[idx]+i-1)/i;
-                }
-                
-
-                if (run_sum <= h) { //If this newly decremented speed still finishes within h hours, 
-                // update our tracking rate to capture this lower speed!
-                    rate = min(rate, i); 
-                }
+    int findMin(vector<int> &nums) {
+        int l = 0;
+        int r = nums.size()-1;
+        int m;
+        //For convergence problems like finding a minimum inflection point, 
+        //change the condition to while (l < r). 
+        //The loop stops the exact millisecond l and r MEET AT THE MINIMUM.
+        while(l<r){
+            m = l + (r-l)/2;
+            if(nums[r]<nums[m]){//you check with the right part because
+                                //in a sorted array, arr[right]>arr[middle]
+                                //can't really hold that condition up on left though
+                                //because for arr[left]<arr[middle], you can have
+                                //arr[l]==arr[m] also, and no check can prevent that, but when its
+                                //arr[r]==arr[m], then we know its the end and we can keep r at m only
+                l=m+1;
             }
-            if (run_sum > h) {
-                i = i + b;
-                run_sum = 0;
-                for(int idx = 0; idx < v.size(); idx++){
-                    run_sum += (v[idx] + i - 1) / i;
-                }
-                if (run_sum <= h) {
-                    rate = min(rate, i); //When we step back up to a working speed, we must record 
-                // this valid rate to prevent TLE and lock in our progression.
-                }
+            else{
+                r=m;
             }
         }
-        return rate;
+        return nums[l]; //l will surely jump pas the min thats 
+                        //in the unsorted part, so that l=m+1 would be the min
     }
 };
