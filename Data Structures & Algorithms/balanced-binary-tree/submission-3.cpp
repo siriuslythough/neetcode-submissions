@@ -12,18 +12,21 @@
 
 class Solution {
 public:
-    int diameterOfBinaryTree(TreeNode* root) {
-        int maxi = 0;
-        maxh_oneshot(root, maxi);
-        return maxi;
+    bool isBalanced(TreeNode* root) {
+        // get the height at each node, and check the difference
+        if(!root) return true;
+        int l_h = h(root->left);
+        int r_h = h(root->right);
+        bool thisnode = (l_h-r_h<=1 && l_h-r_h>=-1);
+        bool leftchild = isBalanced(root->left);
+        bool rightchild = isBalanced(root->right);
+        return (thisnode && leftchild && rightchild); 
     }
 private:
-    int maxh_oneshot(TreeNode* root, int& maxi){
-        if(root==nullptr) return 0;
-        int lefth = maxh_oneshot(root->left, maxi);
-        int righth = maxh_oneshot(root->right, maxi); //recursion golden rule, dont call it again and again
-        //call once, store, remember, dont calculate again and again
-        maxi = max(maxi,lefth+righth);
-        return 1+max(lefth, righth);
+    int h(TreeNode* root){
+        if(!root) return 0;
+        int l = h(root->left);
+        int r = h(root->right);
+        return 1 + max(l,r);
     }
 };
